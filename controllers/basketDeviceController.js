@@ -16,11 +16,16 @@ class BasketDeviceController {
         return res.json(devices)
     }
     async getOne(req, res){
-        const { id } = req.params
-        const device = await BasketDevice.findOne({
-            where: { id },
-        })
+        try {
+            const { id } = req.params
+            const device = await BasketDevice.findOne({
+                where: { id },
+            })
         return res.json(device)
+        } catch (error) {
+            console.error(error)
+        }
+        
     }
     async delete(req, res, next){
         try{

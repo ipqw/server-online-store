@@ -64,14 +64,18 @@ class DeviceController {
         }
     }
     async delete(req, res){
-        const { id } = req.body
-        const device = await Device.findOne({where:{id}})
-        if(device){
-            Device.destroy({where:{id}})
-            return res.json('Device was deleted')
-        }
-        else{
-            return res.json('Device was not found')
+        try {
+            const { id } = req.body
+            const device = await Device.findOne({where:{id}})
+            if(device){
+                Device.destroy({where:{id}})
+                return res.json('Device was deleted')
+            }
+            else{
+                return res.json('Device was not found')
+            }
+        } catch (error) {
+            console.error(error) 
         }
     }
 }

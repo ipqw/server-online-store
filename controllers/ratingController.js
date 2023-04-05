@@ -46,15 +46,19 @@ class DeviceController {
     }
 
     async delete(req, res){
-        const { id } = req.body
-        const rating = await Rating.findOne({where:{id}})
-        if(rating){
-            Rating.destroy({where:{id}})
-            return res.json('Rating was deleted')
-        }
-        else{
-            return res.json('Rating was not found')
-        }
+        try {
+            const { id } = req.body
+            const rating = await Rating.findOne({where:{id}})
+            if(rating){
+                Rating.destroy({where:{id}})
+                return res.json('Rating was deleted')
+            }
+            else{
+                return res.json('Rating was not found')
+            }
+        } catch (error) {
+            console.error(error)
+        }   
     }
 }
 

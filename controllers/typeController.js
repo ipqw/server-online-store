@@ -13,14 +13,18 @@ class TypeController {
         return res.json(types)
     }
     async delete(req, res, next){
-        const { id } = req.body
-        const type = await Type.findOne({where:{id}})
-        if(type){
-            Type.destroy({where:{id}})
-            return res.json('Type was deleted')
-        }
-        else{
-            return res.json('Type was not found')
+        try {
+            const { id } = req.body
+            const type = await Type.findOne({where:{id}})
+            if(type){
+                Type.destroy({where:{id}})
+                return res.json('Type was deleted')
+            }
+            else{
+                return res.json('Type was not found')
+            }   
+        } catch (error) {
+            console.error(error)
         }
     }
 }
