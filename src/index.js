@@ -3,7 +3,6 @@ const express = require('express');
 const sequelize = require('./db')
 const PORT = process.env.PORT || 5000
 const cors = require('cors')
-const models = require('./models/models')
 const router = require('./routes/index')
 const path = require('path')
 const errorHandler = require('./middleware/ErrorHandlingMiddleware')
