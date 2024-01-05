@@ -2,12 +2,18 @@ const path = require('path')
 const { Rating } = require('../models/models')
 const ApiError = require('../error/ApiError')
 
-class DeviceController {
+class RatingController {
     async create(req, res, next){
         try {
             let { rate, deviceId, userId, author, text } = req.body
-            const rating = await Rating.create({rate, userId, deviceId, author, text})
-            return res.json(rating)
+            const existingRating = await Rating.findOne({where: {userId, deviceId}})
+            if(!existingRating){
+                const rating = await Rating.create({rate, userId, deviceId, author, text})
+                return res.json(rating)
+            }
+            else{
+                return res.json({message: 'Отзыв на этот товар уже существует'})
+            }
         } catch (e) {
             next(ApiError.badRequest(e.message))
         }
@@ -62,4 +68,4 @@ class DeviceController {
     }
 }
 
-module.exports = new DeviceController()
+module.exports = new RatingController()
