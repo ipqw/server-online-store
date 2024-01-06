@@ -1,11 +1,18 @@
-const { BasketDevice, Basket } = require("../models/models")
+const { BasketDevice } = require("../models/models")
 
 class BasketDeviceController {
     async create(req, res){
         try {
             const { deviceId, basketId } = req.body
-            const basketDevice = await BasketDevice.create({deviceId, basketId})
-            return res.json(basketDevice)
+            const existingRating = await Rating.findOne({where: {basketId, deviceId}})
+            if(!existingRating){
+                const basketDevice = await BasketDevice.create({deviceId, basketId})
+                return res.json(basketDevice)
+            }
+            else{
+                return res.json({message: 'Товар уже добавлен в корзину'})
+            }
+            
         } catch (error) {
             console.error(error)
         }
