@@ -4,12 +4,18 @@ class BasketDeviceController {
     async create(req, res){
         try {
             const { deviceId, basketId } = req.body
-            const basketDevice = await BasketDevice.create({deviceId, basketId})
-            return res.json(basketDevice)
+            const existingBasketDevice = await BasketDevice.findOne({where: {basketId, deviceId}})
+            if(!existingBasketDevice){
+                const basketDevice = await BasketDevice.create({deviceId, basketId})
+                return res.json(basketDevice)
+            }
+            else{
+                return res.json({message: 'Товар уже добавлен в корзину'})
+            }
+            
         } catch (error) {
             console.error(error)
         }
-        
     }
     async getAll(req, res){
         const devices = await BasketDevice.findAll()
