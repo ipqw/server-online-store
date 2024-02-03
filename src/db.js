@@ -1,7 +1,7 @@
 const {Sequelize} = require('sequelize');
 const pg = require('pg');
 
-module.exports = new Sequelize("postgres://default:VkJ2rajm8gQw@ep-tight-salad-a4ydeewk.us-east-1.postgres.vercel-storage.com:5432/verceldb?ssl=true",
+module.exports = new Sequelize("postgres://default:Mc6psw9BXmCv@ep-restless-thunder-a2p3oqrf.eu-central-1.postgres.vercel-storage.com:5432/verceldb?ssl=true",
     {
         dialect: 'postgres',
         dialectModule: pg,
