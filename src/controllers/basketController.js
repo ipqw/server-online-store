@@ -5,7 +5,7 @@ class BasketController {
         const baskets = await Basket.findAll()
         return res.json(baskets)
     }
-    async getOne(req, res){
+    async getOne(req, res, next){
         try{
             const { id } = req.params
             const baskets = await Basket.findOne({
@@ -14,8 +14,8 @@ class BasketController {
             })
             return res.json(baskets)
         }
-        catch(err){
-            console.error(err)
+        catch (e) {
+            next(ApiError.badRequest(e.message))
         }
         
     }

@@ -23,8 +23,8 @@ class UserController {
             const basket = await Basket.create({userId: user.id})
             const token = generateJWT(user.id, user.email, user.role)
             return res.json({token, userId: user.id})
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
         
     }
@@ -42,8 +42,8 @@ class UserController {
             }
             const token = generateJWT(user.id, user.email, user.role)
             return res.json({token, userId: user.id})
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
     }
 
@@ -51,13 +51,13 @@ class UserController {
         try {
             const token = generateJWT(req.user.id, req.user.email, req.user.role)
             return res.json({token})
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
         
     }
 
-    async delete(req, res){
+    async delete(req, res, next){
         try {
             const { id } = req.body
             const user = await User.findOne({where:{id}})
@@ -68,19 +68,23 @@ class UserController {
             else{
                 return res.json('User was not found')
             }
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
     }
-    async getAll(req, res){
-        let { page, limit } = req.query
-        page = page || 1
-        limit = limit || 9
-        let offset = page * limit - limit
-        const users = await User.findAndCountAll({limit, offset})
-        return res.json(users)
+    async getAll(req, res, next){
+        try {
+            let { page, limit } = req.query
+            page = page || 1
+            limit = limit || 9
+            let offset = page * limit - limit
+            const users = await User.findAndCountAll({limit, offset})
+            return res.json(users)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
+        }
     }
-    async getOne(req, res){
+    async getOne(req, res, next){
         try {
             const { id } = req.params
             const user = await User.findOne({
@@ -89,8 +93,8 @@ class UserController {
             })
             return res.json(user)
 
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
         
     }

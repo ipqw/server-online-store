@@ -1,7 +1,7 @@
-const { BasketDevice, Basket } = require("../models/models")
+const { BasketDevice } = require("../models/models")
 
 class BasketDeviceController {
-    async create(req, res){
+    async create(req, res, next){
         try {
             const { deviceId, basketId } = req.body
             const existingBasketDevice = await BasketDevice.findOne({where: {basketId, deviceId}})
@@ -13,23 +13,23 @@ class BasketDeviceController {
                 return res.json({message: 'Товар уже добавлен в корзину'})
             }
             
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
     }
     async getAll(req, res){
         const devices = await BasketDevice.findAll()
         return res.json(devices)
     }
-    async getOne(req, res){
+    async getOne(req, res, next){
         try {
             const { id } = req.params
             const device = await BasketDevice.findOne({
                 where: { id },
             })
         return res.json(device)
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
         
     }
@@ -45,8 +45,8 @@ class BasketDeviceController {
                 return res.json('Device was not found')
             }
         }
-        catch(error){
-            console.error(error)
+        catch (e) {
+            next(ApiError.badRequest(e.message))
         }
         
     }

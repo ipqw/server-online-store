@@ -4,16 +4,13 @@ const sequelize = require('./db')
 const PORT = process.env.PORT || 5000
 const cors = require('cors')
 const router = require('./routes/index')
-const path = require('path')
 const errorHandler = require('./middleware/ErrorHandlingMiddleware')
 const fileUpload = require('express-fileupload')
 
 const app = express()
 app.use(express.json())
 app.use(cors())
-// При поддержке сервером хранения файлов
-// app.use(express.static(path.resolve(__dirname, 'static')))
-// app.use(fileUpload({}))
+app.use(fileUpload({useTempFiles: true}))
 app.use('/api', router)
 
 // Обработка ошибок

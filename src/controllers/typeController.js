@@ -23,8 +23,8 @@ class TypeController {
             else{
                 return res.json('Type was not found')
             }   
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
     }
 }

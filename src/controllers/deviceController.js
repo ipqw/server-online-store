@@ -1,18 +1,22 @@
 const uuid = require('uuid')
-const path = require('path')
 const { Device, DeviceInfo, Rating } = require('../models/models')
 const ApiError = require('../error/ApiError')
+const cloudinary = require('cloudinary').v2
+
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 class DeviceController {
     async create(req, res, next){
         try {
             let { name, price, brandId, typeId, info } = req.body
-            // При поддержке сервером хранение файлов
+            const { img } = req.files
             let filename = uuid.v4() + '.jpg'
-            // const { img } = req.files
-            // img.mv(path.resolve(__dirname, '..', 'static', filename))
-
-            const device = await Device.create({name, price, brandId, typeId, img: filename})
+            const image = await cloudinary.uploader.upload(img.tempFilePath).then(result => result)
+            const device = await Device.create({name, price, brandId, typeId, img: filename, url: image.url})
 
             if(info){
                 info = JSON.parse(info)
@@ -52,7 +56,7 @@ class DeviceController {
         return res.json(devices)
     }
 
-    async getOne(req, res){
+    async getOne(req, res, next){
         try {
             const { id } = req.params
             const device = await Device.findOne({
@@ -60,11 +64,11 @@ class DeviceController {
                 include: [{model: DeviceInfo, as: 'info'}, {model: Rating, as: 'ratings'}] 
             })
             return res.json(device)
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
     }
-    async delete(req, res){
+    async delete(req, res, next){
         try {
             const { id } = req.body
             const device = await Device.findOne({where:{id}})
@@ -75,8 +79,8 @@ class DeviceController {
             else{
                 return res.json('Device was not found')
             }
-        } catch (error) {
-            console.error(error) 
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
     }
 }

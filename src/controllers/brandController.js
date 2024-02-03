@@ -2,13 +2,13 @@ const ApiError = require("../error/ApiError")
 const { Brand } = require("../models/models")
 
 class BrandController {
-    async create(req, res,){
+    async create(req, res, next){
         try {
             const { name } = req.body
             const brand = await Brand.create({name})
             return res.json(brand)
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
         
     }
@@ -27,8 +27,8 @@ class BrandController {
             else{
                 return res.json('Brand was not found')
             }
-        } catch (error) {
-            console.error(error)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
         
     }
