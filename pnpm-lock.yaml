@@ -38,6 +38,9 @@ dependencies:
   sequelize:
     specifier: ^6.28.0
     version: 6.35.2(pg-hstore@2.3.4)(pg@8.11.3)
+  streamifier:
+    specifier: ^0.1.1
+    version: 0.1.1
   uuid:
     specifier: ^9.0.0
     version: 9.0.1
@@ -1255,6 +1258,11 @@ packages:
   /statuses@2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /streamifier@0.1.1:
+    resolution: {integrity: sha512-zDgl+muIlWzXNsXeyUfOk9dChMjlpkq0DRsxujtYPgyJ676yQ8jEm6zzaaWHFDg5BNcLuif0eD2MTyJdZqXpdg==}
+    engines: {node: '>=0.10'}
     dev: false
 
   /streamsearch@1.1.0:

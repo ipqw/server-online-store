@@ -2,39 +2,59 @@ const uuid = require('uuid')
 const { Device, DeviceInfo, Rating } = require('../models/models')
 const ApiError = require('../error/ApiError')
 const cloudinary = require('cloudinary').v2
+const streamifier = require('streamifier')
+const fs = require('fs')
+
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true
 });
 
 class DeviceController {
     async create(req, res, next){
         try {
-            let { name, price, brandId, typeId, info } = req.body
-            const { img } = req.files
-            let filename = uuid.v4() + '.jpg'
-            const image = await cloudinary.uploader.upload(img.tempFilePath).then(result => result)
-            const device = await Device.create({name, price, brandId, typeId, img: filename, url: image.url})
-
-            if(info){
-                info = JSON.parse(info)
-                info.forEach(e => 
-                    DeviceInfo.create({
-                        title: e.title,
-                        description: e.description,
-                        deviceId: device.id,
-                    })
-                );
+            const streamUpload = (req) => {
+                const { img } = req.files
+                return new Promise((resolve, reject) => {
+                    let stream = cloudinary.uploader.upload_stream(
+                      (error, result) => {
+                        if (result) {
+                          resolve(result);
+                        } else {
+                          reject(error);
+                        }
+                      }
+                    );
+                  streamifier.createReadStream(img.data).pipe(stream);
+                });
+            };
+        
+            async function upload(req) {
+                let { name, price, brandId, typeId, info } = req.body
+                
+                let filename = uuid.v4() + '.jpg'
+                let result = await streamUpload(req);
+                console.log(result);
+                const device = await Device.create({name, price, brandId, typeId, img: filename, url: result.url})
+                if(info){
+                    info = JSON.parse(info)
+                    info.forEach(e => 
+                        DeviceInfo.create({
+                            title: e.title,
+                            description: e.description,
+                            deviceId: device.id,
+                        })
+                    );
+                }
+                return res.json(device) 
             }
-
-            return res.json(device) 
-
+            upload(req);
         } catch (e) {
             next(ApiError.badRequest(e.message))
         }
-        
     }
 
     async getAll(req, res){
